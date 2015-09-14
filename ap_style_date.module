@@ -42,23 +42,23 @@ function ap_style_field_formatter_settings_form($field, $instance, $view_mode, $
     $element['use_today'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Today'),
-      '#options' => array(TRUE => 'Today\'s date as Today', FALSE => 'Today\'s date as regular ap style'),
-      '#default_value' => $settings['use_today'],
-      '#description' => t('Use colloquial text version of "Today"'),
+      // '#options' => array(TRUE => 'Today\'s date as Today', FALSE => 'Today\'s date as regular ap style'),
+      // '#default_value' => $settings['use_today'],
+      // '#description' => t('Use colloquial text version of "Today"'),
     );
     $element['cap_today'] = array(
       '#type' => 'checkbox',
       '#title' => t('Capitalize Today'),
-      '#options' => array(TRUE => 'Today', FALSE => 'today'),
-      '#default_value' => $settings['cap_today'],
-      '#description' => t('Capitalize the word Today'),
+      // '#options' => array(TRUE => 'Today', FALSE => 'today'),
+      // '#default_value' => $settings['cap_today'],
+      // '#description' => t('Capitalize the word Today'),
     );
     $element['use_year'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Year'),
-      '#options' => array(TRUE => 'Use year', FALSE => 'Do not use year'),
-      '#default_value' => $settings['use_year'],
-      '#description' => t('You can elect to not add the year to the end of the date'),
+      // '#options' => array(TRUE => 'Use year', FALSE => 'Do not use year'),
+      // '#default_value' => $settings['use_year'],
+      // '#description' => t('You can elect to not add the year to the end of the date'),
     );
   }
   return $element;

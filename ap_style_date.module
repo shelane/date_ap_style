@@ -16,6 +16,7 @@ function ap_style_date_field_formatter_info() {
           'label' => t('AP Style Date'),
           'description' => t('Displays a date as AP Style.'),
           'field types' => array('date', 'datestamp', 'datetime'),
+          'settings' => array('use_today' => TRUE, 'cap_today' => TRUE, 'use_year' => TRUE ),
       ),
     );
 }
@@ -37,6 +38,39 @@ function ap_style_date_field_formatter_view($entity_type, $entity, $field, $inst
 }
 
 /**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function ap_style_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $element = array();
+  if ($display['type'] == 'ap_date') {
+    $element['use_today'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use Today'),
+      '#options' => array(TRUE => 'Today\'s date as Today', FALSE => 'Today\'s date as regular ap style'),
+      '#default_value' => $settings['use_today'],
+      '#description' => t('Use colloquial text version of "Today"'),
+    );
+    $element['cap_today'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Capitalize Today'),
+      '#options' => array(TRUE => 'Today', FALSE => 'today'),
+      '#default_value' => $settings['cap_today'],
+      '#description' => t('Capitalize the word Today'),
+    );
+    $element['use_year'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use Year'),
+      '#options' => array(TRUE => 'Use year', FALSE => 'Do not use year'),
+      '#default_value' => $settings['use_year'],
+      '#description' => t('You can elect to not add the year to the end of the date'),
+    );
+  }
+  return $element;
+}
+
+/**
  * Creates an AP Style formatted date string from a date string.
  *
  * @todo: Turn the variables $use_today, $cap_today, and $use_year into actual
@@ -49,14 +83,15 @@ function ap_style_date_field_formatter_view($entity_type, $entity, $field, $inst
  * @return
  *   An AP Style formatted date string.
  */
+
 function ap_style_date_ap_date_string($date_string){
   $input_datetime = strtotime($date_string);
   $ap_string = '';
 
   // TODO: Turn these into actual field formatter settings.
-  $use_today = TRUE;
-  $cap_today = TRUE;
-  $use_year = TRUE;
+  $use_today = $settings['use_today'];
+  $cap_today = $settings['cap_today'];
+  $use_year = $settings['use_year'];
 
   // Determine the month and set the AP Style abbreviation.
   $input_month = date('m', $input_datetime);

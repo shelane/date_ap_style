@@ -1,0 +1,107 @@
+<?php
+/**
+ * @file
+ * Code for the UA News feature.
+ */
+
+include_once 'ua_news.features.inc';
+
+/**
+* Implements hook_field_formatter_info().
+*/
+
+function ap_style_date_field_formatter_info() {
+    return array(
+        'ap_date' => array(
+          'label' => t('AP Style Date'),
+          'description' => t('Displays a date as AP Style.'),
+          'field types' => array('date', 'datestamp', 'datetime'),
+      ),
+    );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function ap_style_date_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+    $element = array();
+    //$settings = $display['settings'];
+    switch ($display['type']) {
+        case 'ap_date':
+            foreach ($items as $delta => $item) {
+                $element[$delta] = array('#markup' => ua_news_ap_date_string($item['value']));
+            }
+        break;
+    }
+     return $element;
+}
+
+/**
+ * Creates an AP Style formatted date string from a date string.
+ *
+ * @todo: Turn the variables $use_today, $cap_today, and $use_year into actual
+ * field formatter settings that can be enabled/disabled in the Field UI and
+ * pass them in dynamically.
+ *
+ * @param $date_string
+ *   A string that can be interpreted by strtotime().
+ *
+ * @return
+ *   An AP Style formatted date string.
+ */
+function ap_style_date_ap_date_string($date_string){
+  $input_datetime = strtotime($date_string);
+  $ap_string = '';
+
+  // TODO: Turn these into actual field formatter settings.
+  $use_today = TRUE;
+  $cap_today = TRUE;
+  $use_year = TRUE;
+
+  // Determine the month and set the AP Style abbreviation.
+  $input_month = date('m', $input_datetime);
+  $ap_month = '';
+  switch ($input_month) {
+    case '01':
+      $ap_month = 'Jan.';
+      break;
+    case '02':
+      $ap_month = 'Feb.';
+      break;
+    case '08':
+      $ap_month = 'Aug.';
+      break;
+    case '09':
+      $ap_month = 'Sept.';
+      break;
+    case '10':
+      $ap_month = 'Oct.';
+      break;
+    case '11':
+      $ap_month = 'Nov.';
+      break;
+    case '12':
+      $ap_month = 'Dec.';
+      break;
+    default:
+      $ap_month = date('F', $input_datetime);
+  }
+
+  // Determine whether the date is within the current year.
+  $input_year = date('Y', $input_datetime);
+  $ap_year = '';
+  if ($input_year != date('Y') || $use_year) {
+    $ap_year = ', ' . $input_year;
+  }
+
+  // Determine whether the date is the current date and set the final output.
+  $today = strtotime('today');
+  if ($input_datetime == $today && $use_today) {
+    $ap_string = $cap_today ? 'Today' : 'today';
+  }
+  else {
+    $ap_string = $ap_month . ' ' . date('j', $input_datetime) . $ap_year;
+  }
+
+  return $ap_string;
+}

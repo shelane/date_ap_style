@@ -1,10 +1,4 @@
 <?php
-/**
- * @file
- * Code for the UA News feature.
- */
-
-include_once 'ua_news.features.inc';
 
 /**
 * Implements hook_field_formatter_info().

@@ -1,1 +1,4 @@
 name = AP Style Date
+dependencies[] = date
+package = Date/Time
+core = 7.x

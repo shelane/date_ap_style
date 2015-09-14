@@ -24,7 +24,7 @@ function ap_style_date_field_formatter_view($entity_type, $entity, $field, $inst
     switch ($display['type']) {
         case 'ap_date':
             foreach ($items as $delta => $item) {
-                $element[$delta] = array('#markup' => ua_news_ap_date_string($item['value']));
+                $element[$delta] = array('#markup' => ap_style_date_ap_date_string($item['value']));
             }
         break;
     }

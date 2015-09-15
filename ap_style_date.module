@@ -124,12 +124,11 @@ function ap_style_date_field_formatter_settings_summary($field, $instance, $view
  *
  * @param $date_string
  *   A string that can be interpreted by strtotime().
- *
  * @param $settings
- *   Array containing settings set in field display configuration.
+ *   An array containing settings set in field display configuration.
  *
- *  @return
- *     An AP Style formatted date string.
+ * @return
+ *   An AP Style formatted date string.
  */
 function ap_style_date_ap_date_string($date_string, $settings) {
 
@@ -198,7 +197,6 @@ function ap_style_date_ap_date_string($date_string, $settings) {
  *
  * @param $date_string
  *   A string that can be interpreted by strtotime().
- *
  * @param $settings
  *   Array containing settings set in field display configuration.
  *

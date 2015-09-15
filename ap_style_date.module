@@ -42,14 +42,12 @@ function ap_style_date_field_formatter_view($entity_type, $entity, $field, $inst
         if (isset($item['value2'])) {
           $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
           $value2_time = ap_style_date_time_string($item['value2'], $settings);
+          $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
           if ($value == $value2 & $settings['show_time'] == TRUE) {
-            $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
-            $value_time = ap_style_date_time_string($item['value'], $settings);
             $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);
-          }
-          elseif (isset($value2) & $settings['show_time'] == TRUE) {
-            $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
-            $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
+            if ($value_time == $value2_time && $settings['show_time'] == TRUE) {
+              $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
+            }
           }
         }
         else {

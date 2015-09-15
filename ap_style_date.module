@@ -92,7 +92,6 @@ function ap_style_date_ap_date_string($date_string, $settings){
   $input_datetime = strtotime($date_string);
   $ap_string = '';
 
-  // TODO: Turn these into actual field formatter settings.
   $use_today = $settings['use_today'];
   $cap_today = $settings['cap_today'];
   $use_year = $settings['use_year'];

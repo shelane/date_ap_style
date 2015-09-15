@@ -21,6 +21,10 @@ Days of the week should be capitalized and not abbreviated.
 ## Time
 
 When describing events that have occurred within a seven day time period from the writing of the story, it is acceptable to use days of the week such as "Monday." For any period of time beyond these seven days, use a month and a figure for dates.
+
 - Use numerical figures except for "noon" and "midnight."
+
 - Use a colon to separate hours from minutes and keep times in lower case: 2:30 p.m.
+
 - Spell out the units of measurement in time sequences: "50 hours, 23 minutes, 14 seconds."
+

@@ -67,9 +67,9 @@ function ap_style_date_field_formatter_settings_summary($field, $instance, $view
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
   $summary = t('Date field settings @use_today, @cap_today, @use_year', array(
-    '@use_today'     => $settings['use_today'],
-    '@cap_today'  => $settings['cap_today'],
-    '@use_year'  => $settings['use_year'],
+    '@use_today'     => ($settings['use_today'] == TRUE ? t('Use Today') : t('Do not use today')),
+    '@cap_today'     => ($settings['cap_today'] == TRUE ? t('Capitalize Today') : t('Do not capitalize today')),
+    '@use_year'     => ($settings['use_year'] == TRUE ? t('Use year') : t('Do not use year')),
   )); // we use t() for translation and placeholders to guard against attacks
   return $summary;
 }

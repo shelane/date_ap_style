@@ -1,9 +1,11 @@
 <?php
+/**
+ * @file
+ */
 
 /**
-* Implements hook_field_formatter_info().
-*/
-
+ * Implements hook_field_formatter_info().
+ */
 function ap_style_date_field_formatter_info() {
     return array(
         'ap_date' => array(
@@ -11,49 +13,48 @@ function ap_style_date_field_formatter_info() {
           'description' => t('Displays a date as AP Style.'),
           'field types' => array('date', 'datestamp', 'datetime'),
           'settings' => array(
-              'use_today' => TRUE,
-              'cap_today' => TRUE,
-              'use_year' => TRUE,
-              'cap_noon' => TRUE,
-              'show_time' => TRUE
+            'use_today' => TRUE,
+            'cap_today' => TRUE,
+            'use_year' => TRUE,
+            'cap_noon' => TRUE,
+            'show_time' => TRUE,
          ),
       ),
     );
 }
-
 /**
  * Implements hook_field_formatter_view().
  */
 function ap_style_date_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-    $element = array();
-    $settings = $display['settings'];
-    switch ($display['type']) {
-        case 'ap_date':
-            foreach ($items as $delta => $item) {
-               $value = ap_style_date_ap_date_string($item['value'], $settings);
-               if ($settings['show_time']) {
-                 $value_time = ap_style_date_time_string($item['value'], $settings);
-               }
-               if (isset($item['value2'])) {
-                    $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
-                    $value2_time = ap_style_date_time_string($item['value2'], $settings);
-                    if($value == $value2 & $settings['show_time'] == TRUE) {
-                        $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
-                        $value_time = ap_style_date_time_string($item['value'], $settings);
-                        $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);
-                    }
-                    elseif(isset($value2) & $settings['show_time'] == TRUE) {
-                        $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
-                        $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
-                    }
-               }
-               else {
-                   $element[$delta] = array('#markup' => $value);
-               }
-            }
-        break;
-    }
-     return $element;
+  $element = array();
+  $settings = $display['settings'];
+  switch ($display['type']) {
+    case 'ap_date':
+      foreach ($items as $delta => $item) {
+        $value = ap_style_date_ap_date_string($item['value'], $settings);
+        if ($settings['show_time']) {
+          $value_time = ap_style_date_time_string($item['value'], $settings);
+        }
+        if (isset($item['value2'])) {
+          $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
+          $value2_time = ap_style_date_time_string($item['value2'], $settings);
+          if($value == $value2 & $settings['show_time'] == TRUE) {
+            $value2 = ap_style_date_ap_date_string($item['value2'], $settings);
+            $value_time = ap_style_date_time_string($item['value'], $settings);
+            $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);
+          }
+          elseif(isset($value2) & $settings['show_time'] == TRUE) {
+            $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
+            $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
+          }
+        }
+        else {
+            $element[$delta] = array('#markup' => $value);
+        }
+      }
+    break;
+  }
+   return $element;
 }
 
 /**
@@ -124,7 +125,6 @@ function ap_style_date_field_formatter_settings_summary($field, $instance, $view
 function ap_style_date_ap_date_string($date_string, $settings){
   $input_datetime = strtotime($date_string);
   $ap_string = '';
-
   $use_today = $settings['use_today'];
   $cap_today = $settings['cap_today'];
   $use_year = $settings['use_year'];

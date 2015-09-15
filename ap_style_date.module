@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Formats dates and times to use "AP" Style
  */
 
 /**
@@ -124,8 +125,11 @@ function ap_style_date_field_formatter_settings_summary($field, $instance, $view
  * @param $date_string
  *   A string that can be interpreted by strtotime().
  *
- * @return
- *   An AP Style formatted date string.
+ * @param $settings
+ *   Array containing settings set in field display configuration.
+ *
+ *  @return
+ *     An AP Style formatted date string.
  */
 function ap_style_date_ap_date_string($date_string, $settings) {
 
@@ -195,10 +199,12 @@ function ap_style_date_ap_date_string($date_string, $settings) {
  * @param $date_string
  *   A string that can be interpreted by strtotime().
  *
+ * @param $settings
+ *   Array containing settings set in field display configuration.
+ *
  * @return
- * An AP Style formatted time string.
+ *   An AP Style formatted time string.
  */
-
 function ap_style_date_time_string($date_string, $settings) {
 
   $input_datetime = strtotime($date_string);

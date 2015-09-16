@@ -37,16 +37,16 @@ function ap_style_date_field_formatter_view($entity_type, $entity, $field, $inst
         foreach ($items as $delta => $item) {
           $timezone = date_get_timezone($field['settings']['tz_handling'], isset($items[0]['timezone']) ? $items[0]['timezone'] : date_default_timezone());
           $value = date_local_date($item, $timezone, $field, $instance, $part = 'value');
-          $value2 = date_local_date($item, $timezone, $field, $instance, $part = 'value2');
-          $value = date_format_date($value, $type = 'custom', $format = 'Y-m-d H:i:s');
-          $value2 = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
+          $value_local = date_format_date($value, $type = 'custom', $format = 'Y-m-d H:i:s');
           $value = ap_style_date_ap_date_string($value, $settings);
           if ($settings['show_time']) {
-            $value_time = ap_style_date_time_string($value, $settings);
+            $value_time = ap_style_date_time_string($value_local, $settings);
           }
           if (isset($item['value2'])) {
+            $value2 = date_local_date($item, $timezone, $field, $instance, $part = 'value2');
+            $value2_local = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
             $value2 = ap_style_date_ap_date_string($value2, $settings);
-            $value2_time = ap_style_date_time_string($value2, $settings);
+            $value2_time = ap_style_date_time_string($value2_local, $settings);
             $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
             if ($value == $value2 & $settings['show_time'] == TRUE) {
               $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);

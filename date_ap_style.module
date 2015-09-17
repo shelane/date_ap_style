@@ -21,6 +21,7 @@ function date_ap_style_field_formatter_info() {
         'use_year' => TRUE,
         'cap_noon' => TRUE,
         'show_time' => TRUE,
+        'use_all_day' => TRUE,
       ),
     ),
   );
@@ -38,22 +39,24 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
           $timezone = date_get_timezone($field['settings']['tz_handling'], isset($items[0]['timezone']) ? $items[0]['timezone'] : date_default_timezone());
           $value = date_local_date($item, $timezone, $field, $instance, $part = 'value');
           $value_local = date_format_date($value, $type = 'custom', $format = 'Y-m-d H:i:s');
-          $value = date_ap_style_ap_date_string($value, $settings);
+          $value = date_ap_style_ap_date_string($value_local, $settings);
           if ($settings['show_time']) {
             $value_time = date_ap_style_time_string($value_local, $settings);
           }
           if (isset($item['value2'])) {
             $value2 = date_local_date($item, $timezone, $field, $instance, $part = 'value2');
             $value2_local = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
-            $value2 = date_ap_style_ap_date_string($value2, $settings);
+            $value2 = date_ap_style_ap_date_string($value2_local, $settings);
             $value2_time = date_ap_style_time_string($value2_local, $settings);
             $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
             if ($value == $value2 & $settings['show_time'] == TRUE) {
               $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);
               if ($value_time == $value2_time && $settings['show_time'] == TRUE) {
                 $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
-                if (strcasecmp($value2_time, 'midnight') == 0 ) {
-                  $element[$delta] = array('#markup' => $value . ' - ' . t('All Day'));
+                if ($settings['use_all_day'] == TRUE) {
+                  if (strcasecmp($value2_time, 'midnight') == 0 ) {
+                    $element[$delta] = array('#markup' => $value . ' - ' . t('All Day'));
+                  }
                 }
               }
             }
@@ -100,6 +103,11 @@ function date_ap_style_field_formatter_settings_form($field, $instance, $view_mo
     '#type' => 'checkbox',
     '#title' => t('Show time'),
     '#default_value' => $settings['show_time'],
+  );
+  $element['use_all_day'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show "All Day" instead of midnight.'),
+    '#default_value' => $settings['use_all_day'],
   );
 
   return $element;

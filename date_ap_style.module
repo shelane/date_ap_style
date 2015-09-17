@@ -63,6 +63,9 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
           }
           else {
             $element[$delta] = array('#markup' => $value);
+              if ($settings['show_time'] == TRUE) {
+                $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
+            }
           }
         }
       break;

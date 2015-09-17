@@ -28,3 +28,8 @@ When describing events that have occurred within a seven day time period from th
 
 - Spell out the units of measurement in time sequences: "50 hours, 23 minutes, 14 seconds."
 
+## Time before date before place (think TDP). Example: The speech will be
+3 p.m. Thursday in Reineke Fine Arts Center. If the event takes place within the
+week, use just the day; otherwise use dates.
+
+

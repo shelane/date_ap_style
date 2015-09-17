@@ -48,14 +48,14 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
             $value2_local = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
             $value2 = date_ap_style_ap_date_string($value2_local, $settings);
             $value2_time = date_ap_style_time_string($value2_local, $settings);
-            $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2 . ' - ' . $value2_time);
+            $element[$delta] = array('#markup' => $value_time . ' ' . $value . ' to ' . $value2_time . ' - ' . $value2);
             if ($value == $value2 & $settings['show_time'] == TRUE) {
-              $element[$delta] = array('#markup' => $value . ' - ' . $value_time . ' to ' . $value2_time);
+              $element[$delta] = array('#markup' => $value_time . ' to ' . $value2_time . ' ' . $value);
               if ($value_time == $value2_time && $settings['show_time'] == TRUE) {
-                $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
+                $element[$delta] = array('#markup' => $value_time . ' - ' . $value);
                 if ($settings['use_all_day'] == TRUE) {
                   if (strcasecmp($value2_time, 'midnight') == 0 ) {
-                    $element[$delta] = array('#markup' => $value . ' - ' . t('All Day'));
+                    $element[$delta] = array('#markup' => t('All Day')  . ' ' . $value);
                   }
                 }
               }
@@ -64,7 +64,7 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
           else {
             $element[$delta] = array('#markup' => $value);
               if ($settings['show_time'] == TRUE) {
-                $element[$delta] = array('#markup' => $value . ' - ' . $value_time);
+                $element[$delta] = array('#markup' => $value_time . ' ' . $value);
             }
           }
         }
@@ -198,9 +198,15 @@ function date_ap_style_ap_date_string($date_string, $settings) {
     $ap_year = ', ' . $input_year;
   }
 
+  // Determine whether the date is within the current week and set the final output.
+  $current_week = date('W');
+  $week_number  = date('W', $input_datetime);
   // Determine whether the date is the current date and set the final output.
   $today = strtotime('today');
-  if ($input_datetime == $today && $use_today) {
+  if ($current_week == $week_number) {
+    $ap_string = date('l', $input_datetime);
+  }
+  elseif ($input_datetime == $today && $use_today) {
     $ap_string = $cap_today ? 'Today' : 'today';
   }
   else {

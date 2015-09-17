@@ -22,6 +22,7 @@ function date_ap_style_field_formatter_info() {
         'cap_noon' => TRUE,
         'show_time' => TRUE,
         'use_all_day' => TRUE,
+        'use_dow' => TRUE,
       ),
     ),
   );
@@ -111,6 +112,11 @@ function date_ap_style_field_formatter_settings_form($field, $instance, $view_mo
     '#type' => 'checkbox',
     '#title' => t('Show "All Day" instead of midnight.'),
     '#default_value' => $settings['use_all_day'],
+  );
+  $element['use_dow'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('If a date occurs in the current week use day of week'),
+    '#default_value' => $settings['use_dow'],
   );
 
   return $element;
@@ -203,7 +209,7 @@ function date_ap_style_ap_date_string($date_string, $settings) {
   $week_number  = date('W', $input_datetime);
   // Determine whether the date is the current date and set the final output.
   $today = strtotime('today');
-  if ($current_week == $week_number) {
+  if ($current_week == $week_number && $use_dow) {
     $ap_string = date('l', $input_datetime);
   }
   elseif ($input_datetime == $today && $use_today) {

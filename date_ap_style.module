@@ -6,6 +6,34 @@
  */
 
 /**
+ * Implements hook_permission().
+ */
+function date_ap_style_permission() {
+  return array(
+    'administer ap style settings' => array(
+      'title' => t('Configure default AP style settings'),
+      'description' => t('Allows users to configure default AP style settings.'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function date_ap_style_menu() {
+  $items['admin/config/content/date-ap-style'] = array(
+    'title' => 'AP Style Date Display Settings',
+    'description' => 'Configure AP date style default settings when using the AP date style format.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('date_ap_style_admin_form'),
+    'access arguments' => array('administer ap style settings'),
+    'file' => 'includes/ap_date.admin.inc',
+  );
+
+  return $items;
+}
+
  * Implements hook_field_formatter_info().
  */
 function date_ap_style_field_formatter_info() {
@@ -16,13 +44,7 @@ function date_ap_style_field_formatter_info() {
       'description' => t('Displays a date as AP Style.'),
       'field types' => array('date', 'datestamp', 'datetime'),
       'settings' => array(
-        'use_today' => TRUE,
-        'cap_today' => TRUE,
-        'use_year' => TRUE,
-        'cap_noon' => TRUE,
-        'show_time' => TRUE,
-        'use_all_day' => TRUE,
-        'use_dow' => TRUE,
+        'date_ap_style_output' => variable_get('date_ap_style_defaults', array()),
       ),
     ),
   );

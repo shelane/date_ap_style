@@ -34,6 +34,16 @@ function date_ap_style_menu() {
   return $items;
 }
 
+/**
+ * Implements hook_views_api().
+ */
+function date_ap_style_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'date_ap_style'),
+  );
+}
+
  * Implements hook_field_formatter_info().
  */
 function date_ap_style_field_formatter_info() {

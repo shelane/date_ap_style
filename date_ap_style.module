@@ -66,7 +66,7 @@ function date_ap_style_field_formatter_info() {
 function date_ap_style_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
 
   $element = array();
-  $settings = $display['settings'];
+  $settings = $display['settings']['date_ap_style_output'];
   switch ($display['type']) {
     case 'date_ap_style':
         foreach ($items as $delta => $item) {
@@ -82,11 +82,11 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
           $value2_local = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
           $value2 = date_ap_style_ap_date_string($value2_local, $settings);
           $value2_time = date_ap_style_time_string($value2_local, $settings);
-          $element[$delta] = array('#markup' => $value_time . ' ' . $value . ' to ' . $value2_time . ' - ' . $value2);
-          if ($value == $value2 & $settings['show_time'] == TRUE) {
+          $element[$delta] = array('#markup' => $value_time . ' ' . $value . ' to ' . $value2_time . ' ' . $value2);
+          if ($settings['show_time'] && $value == $value2) {
             $element[$delta] = array('#markup' => $value_time . ' to ' . $value2_time . ' ' . $value);
             if ($value_time == $value2_time && $settings['show_time'] == TRUE) {
-              $element[$delta] = array('#markup' => $value_time . ' - ' . $value);
+              $element[$delta] = array('#markup' => $value_time . ' ' . $value);
               if ($settings['use_all_day'] == TRUE) {
                 if (strcasecmp($value2_time, 'midnight') == 0) {
                   $element[$delta] = array('#markup' => t('All Day @value', array('@value' => $value)));
@@ -170,14 +170,12 @@ function date_ap_style_ap_date_string($date_string, $settings) {
   $input_datetime = strtotime($date_string);
   $ap_string = '';
   $ap_format = '';
-  $format = $settings['date_ap_style_output'];
-
   // Determine whether the date is the current date and set the final output.
-  if ($format['use_today'] && $input_datetime == strtotime('today')) {
-    $ap_string = $format['cap_today'] ? t('Today') : t('today');
+  if ($settings['use_today'] && $input_datetime == strtotime('today')) {
+    $ap_string = $settings['cap_today'] ? t('Today') : t('today');
   }
   // Determine if the date is within the current week and set final output.
-  elseif ($format['use_dow'] && date('W') == date('W', $input_datetime)) {
+  elseif ($settings['use_dow'] && date('W') == date('W', $input_datetime)) {
     $ap_format = 'l';
   }
   else {
@@ -201,7 +199,7 @@ function date_ap_style_ap_date_string($date_string, $settings) {
     }
     // Determine whether the date is within the current year.
     $ap_year = '';
-    if ($format['use_year'] || date('Y', $input_datetime) != date('Y')) {
+    if ($settings['use_year'] || date('Y', $input_datetime) != date('Y')) {
       $ap_year = ', Y';
     }
 
@@ -225,7 +223,7 @@ function date_ap_style_ap_date_string($date_string, $settings) {
 function date_ap_style_time_string($date_string, $settings) {
 
   $input_datetime = strtotime($date_string);
-  $cap_noon = $settings['date_ap_style_output']['cap_noon'];
+  $cap_noon = $settings['cap_noon'];
 
   // Format am and pm to AP Style abbreviations.
   if (date('a', $input_datetime) == 'am') {

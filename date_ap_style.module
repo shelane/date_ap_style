@@ -13,7 +13,6 @@ function date_ap_style_permission() {
     'administer ap style settings' => array(
       'title' => t('Configure default AP style settings'),
       'description' => t('Allows users to configure default AP style settings.'),
-      'restrict access' => TRUE,
     ),
   );
 }

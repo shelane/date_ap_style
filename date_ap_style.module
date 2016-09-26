@@ -81,31 +81,44 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
         $value = date_local_date($item, $timezone, $field, $instance, $part = 'value');
         $value_local = date_format_date($value, $type = 'custom', $format = 'Y-m-d H:i:s');
         $value = date_ap_style_ap_date_string($value_local, $settings);
+        $element[$delta] = array('#markup' => $value);
         if ($settings['show_time']) {
           $value_time = date_ap_style_time_string($value_local, $settings);
+          if ($settings['date_time']) {
+            $element[$delta] = array('#markup' => $value . ' ' . $value_time);
+          }
+          else {
+            $element[$delta] = array('#markup' => $value_time . ' ' . $value);
+          }
         }
         if (isset($item['value2'])) {
           $value2 = date_local_date($item, $timezone, $field, $instance, $part = 'value2');
           $value2_local = date_format_date($value2, $type = 'custom', $format = 'Y-m-d H:i:s');
           $value2 = date_ap_style_ap_date_string($value2_local, $settings);
-          $value2_time = date_ap_style_time_string($value2_local, $settings);
-          $element[$delta] = array('#markup' => $value_time . ' ' . $value . ' to ' . $value2_time . ' ' . $value2);
-          if ($settings['show_time'] && $value == $value2) {
-            $element[$delta] = array('#markup' => $value_time . ' to ' . $value2_time . ' ' . $value);
-            if ($value_time == $value2_time && $settings['show_time'] == TRUE) {
-              $element[$delta] = array('#markup' => $value_time . ' ' . $value);
-              if ($settings['use_all_day'] == TRUE) {
-                if (strcasecmp($value2_time, 'midnight') == 0) {
+          if ($settings['show_time']) {
+            $value2_time = date_ap_style_time_string($value2_local, $settings);
+            if ($value == $value2) {
+              if ($value_time == $value2_time && $settings['use_all_day'] && strcasecmp($value2_time, 'midnight') == 0) {
+                if ($settings['date_time']) {
+                  $element[$delta] = array('#markup' => t('@value All Day', array('@value' => $value)));
+                }
+                else {
                   $element[$delta] = array('#markup' => t('All Day @value', array('@value' => $value)));
                 }
               }
+              elseif ($settings['date_time']) {
+                $element[$delta] = array('#markup' => $value . ' ' . $value_time . ' to ' . $value2_time);
+              }
+              else {
+                $element[$delta] = array('#markup' => $value_time . ' to ' . $value2_time . ' ' . $value);
+              }
             }
-          }
-        }
-        else {
-          $element[$delta] = array('#markup' => $value);
-          if ($settings['show_time'] == TRUE) {
-            $element[$delta] = array('#markup' => $value_time . ' ' . $value);
+            elseif ($settings['date_time']) {
+              $element[$delta] = array('#markup' => $value . ' ' . $value_time . ' to ' . $value2 . ' ' . $value2_time);
+            }
+            else {
+              $element[$delta] = array('#markup' => $value_time . ' ' . $value . ' to ' . $value2_time . ' ' . $value2);
+            }
           }
         }
         }
@@ -130,11 +143,12 @@ function date_ap_style_field_formatter_settings_form($field, $instance, $view_mo
     '#options' => array(
       'use_today' => t('Use today'),
       'cap_today' => t('Capitalize today'),
-      'use_year' => t('Use year'),
-      'cap_noon' => t('Capitalize noon and midnight'),
-      'show_time' => t('Show time'),
-      'use_all_day' => t('Show "All Day" instead of midnight'),
       'use_dow' => t('Use day of week for current week'),
+      'use_year' => t('Use year'),
+      'show_time' => t('Show time'),
+      'cap_noon' => t('Capitalize noon and midnight'),
+      'use_all_day' => t('Show "All Day" instead of midnight'),
+      'date_time' => t('Use date before time'),
     ),
     '#default_value' => isset($settings['date_ap_style_output']) ? $settings['date_ap_style_output'] : variable_get('date_ap_style_defaults', array()),
   );
@@ -237,7 +251,7 @@ function date_ap_style_time_string($date_string, $settings) {
   if (date('a', $input_datetime) == 'am') {
     $modmeridian = 'a.m.';
   }
-  elseif (date('a', $input_datetime) == 'pm') {
+  else {
     $modmeridian = 'p.m.';
   }
   // Reformat 12:00 and 00:00 to noon and midnight.

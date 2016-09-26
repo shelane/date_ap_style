@@ -51,10 +51,10 @@ class date_ap_style_handler_field_date extends views_handler_field_date {
    */
   function render($values) {
     $value = $this->get_value($values);
-    $format = $this->options['date_ap_style_output'];
+    $settings = $this->options['date_ap_style_output'];
 
     // Determine if the date is within the current week and set final output.
-    if ($format['use_dow'] && date('W') == date('W', $value)) {
+    if ($settings['use_dow'] && date('W') == date('W', $value)) {
       $ap_format = 'l';
     }
     else {
@@ -78,19 +78,25 @@ class date_ap_style_handler_field_date extends views_handler_field_date {
       }
       // Determine whether the date is within the current year.
       $ap_year = '';
-      if ($format['use_year'] || date('Y', $value) != date('Y')) {
+      if ($settings['use_year'] || date('Y', $value) != date('Y')) {
         $ap_year = ', Y';
       }
       $ap_format = $ap_month . ' j' . $ap_year;
     }
-    if ($format['show_time']){
-      $ap_format .= ' g:i ';
+    if ($settings['show_time']){
+      $time_format = 'g:i ';
       // Format am and pm to AP Style abbreviations.
       if (date('a', $value) == 'am') {
-        $ap_format .= '\a.\m.';
+        $time_format .= '\a.\m.';
       }
       elseif (date('a', $value) == 'pm') {
-        $ap_format .= 'p.\m.';
+        $time_format .= 'p.\m.';
+      }
+      if ($settings['date_time']){
+        $ap_format .= ' ' . $time_format;
+      }
+      else {
+        $ap_format = $time_format . ' ' . $ap_format;
       }
     }
     return format_date($value, 'custom', $ap_format);

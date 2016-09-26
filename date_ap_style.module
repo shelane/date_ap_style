@@ -150,12 +150,13 @@ function date_ap_style_field_formatter_settings_summary($field, $instance, $view
   $display = $instance['display'][$view_mode];
   $settings = $display['settings']['date_ap_style_output'];
   $summary = t(
-        'Date AP Style settings @use_today, @cap_today, @use_year, @cap_noon', array(
+        'Date AP Style settings @use_today, @cap_today, @use_year, @cap_noon, @show_time', array(
         // We use t() for translation and placeholders to guard against attacks.
           '@use_today' => ($settings['use_today'] ? t('Use Today') : t('Do not use today')),
           '@cap_today' => ($settings['cap_today'] ? t('Capitalize Today') : t('Do not capitalize today')),
           '@use_year' => ($settings['use_year'] ? t('Use year') : t('Do not use year')),
           '@cap_noon' => ($settings['cap_noon'] ? t('Capitalize noon and midnight') : t('Do not capitalize noon and midnight')),
+          '@show_time' => ($settings['show_time'] ? ($settings['date_time'] ? t('Show date before time') : t('Show time before date')) : 'Do not show time'),
         )
     );
   return $summary;

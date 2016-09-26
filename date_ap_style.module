@@ -47,14 +47,22 @@ function date_ap_style_views_api() {
  * Implements hook_field_formatter_info().
  */
 function date_ap_style_field_formatter_info() {
-
   return array(
     'date_ap_style' => array(
       'label' => t('AP Style Date'),
       'description' => t('Displays a date as AP Style.'),
       'field types' => array('date', 'datestamp', 'datetime'),
       'settings' => array(
-        'date_ap_style_output' => variable_get('date_ap_style_defaults', array()),
+        'date_ap_style_output' => variable_get('date_ap_style_defaults', array(
+          'use_today' => 0,
+          'cap_today' => 0,
+          'use_dow' => 0,
+          'use_year' => 0,
+          'show_time' => 0,
+          'cap_noon' => 0,
+          'use_all_day' => 0,
+          'date_time' => 0,
+        )),
       ),
     ),
   );
@@ -64,7 +72,6 @@ function date_ap_style_field_formatter_info() {
  * Implements hook_field_formatter_view().
  */
 function date_ap_style_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-
   $element = array();
   $settings = $display['settings']['date_ap_style_output'];
   switch ($display['type']) {

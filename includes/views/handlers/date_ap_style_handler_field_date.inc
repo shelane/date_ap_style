@@ -31,11 +31,17 @@ class date_ap_style_handler_field_date extends views_handler_field_date {
       '#type' => 'checkboxes',
       '#title' => t('Display Options'),
       '#options' => array(
+        'use_dow' => t('Use day of week for current week'),
         'use_year' => t('Use year'),
         'show_time' => t('Show time'),
-        'use_dow' => t('Use day of week for current week'),
+        'date_time' => t('Use date before time'),
       ),
-      '#default_value' => isset($this->options['date_ap_style_output']) ? $this->options['date_ap_style_output'] : variable_get('date_ap_style_defaults', array()),
+      '#default_value' => isset($this->options['date_ap_style_output']) ? $this->options['date_ap_style_output'] : variable_get('date_ap_style_defaults', array(
+        'use_dow' => 0,
+        'use_year' => 0,
+        'show_time' => 0,
+        'date_time' => 0,
+      )),
       '#dependency' => array('edit-options-date-format' => array('date_ap_style')),
     );
   }

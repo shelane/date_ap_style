@@ -22,11 +22,12 @@ function date_ap_style_admin_form($form, &$form_state) {
     '#options' => array(
       'use_today' => t('Use today'),
       'cap_today' => t('Capitalize today'),
-      'use_year' => t('Use year'),
-      'cap_noon' => t('Capitalize noon and midnight'),
-      'show_time' => t('Show time'),
-      'use_all_day' => t('Show "All Day" instead of midnight'),
       'use_dow' => t('Use day of week for current week'),
+      'use_year' => t('Use year'),
+      'show_time' => t('Show time'),
+      'cap_noon' => t('Capitalize noon and midnight'),
+      'use_all_day' => t('Show "All Day" instead of midnight'),
+      'date_time' => t('Use date before time'),
     ),
     '#default_value' => variable_get('date_ap_style_defaults', array()),
   );

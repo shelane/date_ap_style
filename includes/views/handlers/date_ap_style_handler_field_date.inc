@@ -51,8 +51,13 @@ class date_ap_style_handler_field_date extends views_handler_field_date {
    */
   function render($values) {
     $value = $this->get_value($values);
-    $settings = $this->options['date_ap_style_output'];
 
+    // If view date format is not date_ap_style, return to parent.
+    if ($this->options['date_format'] != 'date_ap_style') {
+      return $value;
+    }
+
+    $settings = $this->options['date_ap_style_output'];
     // Determine if the date is within the current week and set final output.
     if ($settings['use_dow'] && date('W') == date('W', $value)) {
       $ap_format = 'l';

@@ -76,7 +76,7 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
   $settings = $display['settings']['date_ap_style_output'];
   switch ($display['type']) {
     case 'date_ap_style':
-        foreach ($items as $delta => $item) {
+      foreach ($items as $delta => $item) {
         $timezone = date_get_timezone($field['settings']['tz_handling'], isset($item['timezone']) ? $item['timezone'] : date_default_timezone());
         $value = date_local_date($item, $timezone, $field, $instance, $part = 'value');
         $value_local = date_format_date($value, $type = 'custom', $format = 'Y-m-d H:i:s');
@@ -121,7 +121,7 @@ function date_ap_style_field_formatter_view($entity_type, $entity, $field, $inst
             }
           }
         }
-        }
+      }
       break;
   }
 

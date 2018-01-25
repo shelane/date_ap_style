@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Provides views handler for AP date style.

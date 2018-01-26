@@ -54,7 +54,7 @@ class date_ap_style_handler_field_date extends views_handler_field_date {
 
     // If view date format is not date_ap_style, return to parent.
     if ($this->options['date_format'] != 'date_ap_style') {
-      return $value;
+      return parent::render($values);
     }
 
     $settings = $this->options['date_ap_style_output'];

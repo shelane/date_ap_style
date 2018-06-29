@@ -197,7 +197,7 @@ function date_ap_style_ap_date_string($date_string, $settings) {
     $ap_string = $settings['cap_today'] ? t('Today') : t('today');
   }
   // Determine if the date is within the current week and set final output.
-  elseif ($settings['use_dow'] && date('W') == date('W', $input_datetime)) {
+  elseif ($settings['use_dow'] && date('W o') == date('W o', $input_datetime)) {
     $ap_format = 'l';
   }
   else {

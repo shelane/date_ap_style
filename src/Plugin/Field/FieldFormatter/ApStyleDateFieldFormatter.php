@@ -80,15 +80,18 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
-      'always_display_year' => TRUE,
-      'display_day' => TRUE,
-      'display_time' => TRUE,
-      'time_before_date' => TRUE,
-      'display_noon_and_midnight' => FALSE,
-      'capitalize_noon_and_midnight' => FALSE,
-      'timezone' => '',
-    ) + parent::defaultSettings();
+    $config = \Drupal::config('date_ap_style.dateapstylesettings');
+    $base_defaults = [
+      'always_display_year' => $config->get('always_display_year'),
+      'display_day' => $config->get('display_day'),
+      'display_time' => $config->get('display_time'),
+      'time_before_date' => $config->get('time_before_date'),
+      'use_all_day' => $config->get('use_all_day'),
+      'display_noon_and_midnight' => $config->get('display_noon_and_midnight'),
+      'capitalize_noon_and_midnight' => $config->get('capitalize_noon_and_midnight'),
+      'timezone' => $config->get('timezone'),
+    ];
+    return $base_defaults + parent::defaultSettings();
   }
 
   /**
@@ -104,10 +107,23 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
       '#default_value' => $this->getSetting('always_display_year'),
     ];
 
+    $elements['use_today'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use today'),
+      '#default_value' => $this->getSetting('use_today'),
+    ];
+
+    $elements['cap_today'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Capitalize today'),
+      '#default_value' => $this->getSetting('cap_today'),
+    ];
+
     $elements['display_day'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Display day'),
+      '#title' => $this->t('Display day of the week'),
       '#default_value' => $this->getSetting('display_day'),
+      '#description' => $this->t('Display the day of the week when the date is in the same week as the current date.'),
     ];
 
     $elements['display_time'] = [
@@ -121,6 +137,25 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
       '#title' => $this->t('Display time before date'),
       '#description' => $this->t('When checked, the time will be displayed before the date. Otherwise it will be displayed after the date.'),
       '#default_value' => $this->getSetting('time_before_date'),
+      '#states' => [
+        'visible' => [
+          ':input[name$="[settings][display_time]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $elements['use_all_day'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Show "All Day" instead of midnight'),
+      '#default_value' => $this->getSetting('use_all_day'),
+      '#states' => [
+        'visible' => [
+          ':input[name$="[settings][display_time]"]' => ['checked' => TRUE],
+        ],
+        'unchecked' => [
+          ':input[name$="[settings][display_noon_and_midnight]"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $elements['display_noon_and_midnight'] = [
@@ -128,20 +163,34 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
       '#title' => $this->t('Display noon and midnight'),
       '#default_value' => $this->getSetting('display_noon_and_midnight'),
       '#description' => $this->t('Converts 12:00 p.m. to "noon" and 12:00 a.m. to "midnight".'),
+      '#states' => [
+        'visible' => [
+          ':input[name$="[settings][display_time]"]' => ['checked' => TRUE],
+        ],
+        'unchecked' => [
+          ':input[name$="[settings][use_all_day]"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $elements['capitalize_noon_and_midnight'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Capitalize noon and midnight'),
       '#default_value' => $this->getSetting('capitalize_noon_and_midnight'),
+      '#states' => [
+        'visible' => [
+          ':input[name$="[settings][display_time]"]' => ['checked' => TRUE],
+          ':input[name$="[settings][display_noon_and_midnight]"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
-    $elements['timezone'] = array(
+    $elements['timezone'] = [
       '#type' => 'select',
       '#title' => $this->t('Time zone'),
-      '#options' => array('' => $this->t('- Default site/user time zone -')) + system_time_zones(FALSE),
+      '#options' => ['' => $this->t('- Default site/user time zone -')] + system_time_zones(FALSE),
       '#default_value' => $this->getSetting('timezone'),
-    );
+    ];
 
     return $elements;
   }
@@ -157,7 +206,7 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
     }
 
     if ($this->getSetting('display_day')) {
-      $summary[] = $this->t('Displaying day');
+      $summary[] = $this->t('Displaying day of the week');
     }
 
     if ($this->getSetting('display_time')) {
@@ -169,8 +218,10 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
         $display_time .= ' (after date)';
       }
       $summary[] = $display_time;
-
-      if ($this->getSetting('display_noon_and_midnight')) {
+      if ($this->getSetting('use_all_day')) {
+        $summary[] = 'Show "All Day" instead of midnight';
+      }
+      elseif ($this->getSetting('display_noon_and_midnight')) {
         $noon_and_midnight = $this->t('Displaying noon and midnight');
         if ($this->getSetting('capitalize_noon_and_midnight')) {
           $noon_and_midnight .= ' (capitalized)';
@@ -180,7 +231,7 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
     }
 
     if ($timezone = $this->getSetting('timezone')) {
-      $summary[] = $this->t('Time zone: @timezone', array('@timezone' => $timezone));
+      $summary[] = $this->t('Time zone: @timezone', ['@timezone' => $timezone]);
     }
 
     return $summary;
@@ -190,13 +241,16 @@ class ApStyleDateFieldFormatter extends FormatterBase implements ContainerFactor
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
 
     $opts = [
       'always_display_year',
       'display_day',
+      'use_today',
+      'cap_today',
       'display_time',
       'time_before_date',
+      'use_all_day',
       'display_noon_and_midnight',
       'capitalize_noon_and_midnight',
     ];
